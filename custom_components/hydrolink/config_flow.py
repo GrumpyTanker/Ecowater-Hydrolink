@@ -61,7 +61,7 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 import homeassistant.helpers.config_validation as cv
 
-from .const import DOMAIN
+from .const import DOMAIN, CONF_REGION, REGIONS, REGION_US
 from .api import HydroLinkApi, CannotConnect, InvalidAuth
 
 _LOGGER = logging.getLogger(__name__)
@@ -71,9 +71,9 @@ DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_EMAIL): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
+        vol.Optional(CONF_REGION, default=REGION_US): vol.In(REGIONS),
     }
 )
-
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for HydroLink."""
@@ -109,7 +109,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             try:
                 # Create an API instance and attempt to log in
-                api = HydroLinkApi(user_input[CONF_EMAIL], user_input[CONF_PASSWORD])
+                api = HydroLinkApi(
+                    user_input[CONF_EMAIL], 
+                    user_input[CONF_PASSWORD],
+                    user_input.get(CONF_REGION, REGION_US)
+                )
 
                 # Wrap in try-except to handle API exceptions
                 try:

@@ -111,15 +111,19 @@ class HydroLinkApi:
     BASE_URL = "https://api.hydrolinkhome.com/v1"
     WS_BASE_URL = "wss://api.hydrolinkhome.com"
 
-    def __init__(self, email: str, password: str) -> None:
+    def __init__(self, email: str, password: str, region: str = "com") -> None:
         """Initialize the API.
 
         Args:
             email: The users HydroLink email
             password: The users HydroLink password
+            region: The HydroLink domain region (com or eu)
         """
         self.email: str = email
         self.password: str = password
+        self.region: str = region
+        self.base_url: str = f"https://api.hydrolinkhome.{region}/v1"
+        self.ws_base_url: str = f"wss://api.hydrolinkhome.{region}"
         self.auth_cookie: Optional[str] = None
         self.ws_message_count: int = 0
         self.waiting_for_ws_thread_to_end: int = 1
@@ -145,7 +149,7 @@ class HydroLinkApi:
         """
         try:
             response = requests.post(
-                f"{self.BASE_URL}/auth/login",
+                f"{self.base_url}/auth/login",
                 json={"email": self.email, "password": self.password},
                 timeout=10,
             )
@@ -303,7 +307,7 @@ class HydroLinkApi:
         try:
             # Get the list of devices
             response = requests.get(
-                f"{self.BASE_URL}/devices",
+                f"{self.base_url}/devices",
                 params={"all": "false", "per_page": "200"},
                 cookies={"hhfoffoezyzzoeibwv": self.auth_cookie},
                 timeout=10,
@@ -327,7 +331,7 @@ class HydroLinkApi:
 
                     # Get the WebSocket URI for the device
                     response = requests.get(
-                        f"{self.BASE_URL}/devices/{device_id}/live",
+                        f"{self.base_url}/devices/{device_id}/live",
                         cookies={"hhfoffoezyzzoeibwv": self.auth_cookie},
                         timeout=10,
                     )
@@ -339,7 +343,7 @@ class HydroLinkApi:
                         _LOGGER.warning("No WebSocket URI for device %s", device_id)
                         continue
 
-                    self.ws_uri = f"{self.WS_BASE_URL}{ws_path}"
+                    self.ws_uri = f"{self.ws_base_url}{ws_path}"
                     self.waiting_for_ws_thread_to_end = 1
 
                     # Start WebSocket connection in separate thread
@@ -377,7 +381,7 @@ class HydroLinkApi:
 
             # Fetch fresh data for all devices
             response = requests.get(
-                f"{self.BASE_URL}/devices",
+                f"{self.base_url}/devices",
                 params={"all": "false", "per_page": "200"},
                 cookies={"hhfoffoezyzzoeibwv": self.auth_cookie},
                 timeout=10,
@@ -411,7 +415,7 @@ class HydroLinkApi:
 
         try:
             response = requests.post(
-                f"{self.BASE_URL}/devices/{device_id}/regenerate",
+                f"{self.base_url}/devices/{device_id}/regenerate",
                 cookies={"hhfoffoezyzzoeibwv": self.auth_cookie},
                 timeout=10,
             )
@@ -437,3 +441,4 @@ class CannotConnect(Exception):
 
 class InvalidAuth(Exception):
     """Error to indicate there is invalid auth."""
+

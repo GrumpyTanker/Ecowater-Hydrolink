@@ -6,7 +6,8 @@
                 "description": "Please enter your HydroLink email and password",
                 "data": {
                     "email": "Email",
-                    "password": "Password"
+                    "password": "Password",
+                    "region": "Region"
                 }
             }
         },

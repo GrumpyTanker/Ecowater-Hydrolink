@@ -23,7 +23,7 @@ MOCK_DEVICE_ID = "test-device-id"
 @pytest.fixture
 def api():
     """Create a HydroLinkApi instance for testing."""
-    return HydroLinkApi(MOCK_EMAIL, MOCK_PASSWORD)
+    return HydroLinkApi(MOCK_EMAIL, MOCK_PASSWORD, "com")
 
 
 @pytest.fixture
@@ -164,3 +164,4 @@ def test_websocket_message_handling(api):
 
         # Wait for thread to finish
         ws_thread.join(timeout=1)
+

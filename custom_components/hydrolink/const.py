@@ -34,3 +34,11 @@ PLATFORMS = ["sensor"]
 
 # Services
 SERVICE_TRIGGER_REGENERATION = "trigger_regeneration"
+
+# Configuration keys
+CONF_REGION = "region"
+
+# Available regions
+REGION_US = "com"
+REGION_EU = "eu"
+REGIONS = {REGION_US: "United States (.com)", REGION_EU: "Europe (.eu)"}

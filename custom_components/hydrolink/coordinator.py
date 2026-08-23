@@ -60,7 +60,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 
 from .api import HydroLinkApi, CannotConnect, InvalidAuth
-from .const import DOMAIN
+from .const import DOMAIN, CONF_REGION, REGION_US
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,6 +78,7 @@ class HydroLinkDataUpdateCoordinator(DataUpdateCoordinator):
         self.api = HydroLinkApi(
             entry.data[CONF_EMAIL],
             entry.data[CONF_PASSWORD],
+            entry.data.get(CONF_REGION, REGION_US),
         )
         # Initialize the DataUpdateCoordinator
         super().__init__(
