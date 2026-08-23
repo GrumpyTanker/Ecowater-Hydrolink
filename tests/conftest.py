@@ -12,7 +12,7 @@ Changelog:
 - 0.1.0 (2025-06-12)
   * Initial release
   * Basic test configuration
-  
+
 - 0.2.0 (2025-10-02)
   * Added socket disabling
   * Improved test isolation
@@ -30,6 +30,7 @@ from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.core import HomeAssistant
 from pytest_socket import disable_socket, enable_socket
 
+
 @pytest.fixture(autouse=True)
 def disable_socket_for_tests():
     """Disable socket usage for most tests."""
@@ -37,7 +38,9 @@ def disable_socket_for_tests():
         disable_socket()
     return True
 
+
 import asyncio
+
 
 class MockEventLoop(asyncio.AbstractEventLoop):
     """A mock event loop for testing."""
@@ -56,7 +59,7 @@ class MockEventLoop(asyncio.AbstractEventLoop):
         fut = asyncio.Future()
         fut.set_result(None)
         return fut
-    
+
     def call_soon(self, callback, *args, context=None):
         callback(*args)
         return None
@@ -85,12 +88,14 @@ class MockEventLoop(asyncio.AbstractEventLoop):
     def set_exception_handler(self, handler):
         pass
 
+
 @pytest.fixture
 def mock_event_loop():
     """Create a mock event loop for use in tests."""
     loop = MockEventLoop()
     asyncio.set_event_loop(loop)
     return loop
+
 
 @pytest.fixture
 def hass(mock_event_loop):
@@ -104,11 +109,11 @@ def hass(mock_event_loop):
         "entity_registry": {},  # May be needed
     }
     hass.config.components = set()
-    
+
     # Mock core services
     hass.services = Mock()
     hass.services.async_register = AsyncMock()
-    
+
     # Mock async methods
     hass.async_add_executor_job = AsyncMock()
     hass.config_entries = Mock()
@@ -117,8 +122,8 @@ def hass(mock_event_loop):
     hass.config_entries.async_unload_platforms = AsyncMock(return_value=True)
     hass.config_entries.async_entries = AsyncMock(return_value=[])
     hass.config_entries.async_flow_progress = AsyncMock(return_value=[])
-    
+
     # Set up loop
     hass.loop = mock_event_loop
-    
+
     return hass

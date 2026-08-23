@@ -14,7 +14,7 @@ Changelog:
 - 0.1.0 (2025-06-12)
   * Initial release
   * Basic mock helpers
-  
+
 - 0.2.0 (2025-10-02)
   * Added comprehensive mocking
   * Added type hints
@@ -32,32 +32,34 @@ from unittest.mock import AsyncMock, Mock, patch
 
 from homeassistant.core import HomeAssistant
 
+
 def create_mock_hass():
     """Create a mock Home Assistant instance."""
     hass = Mock(spec=HomeAssistant)
-    
+
     # Mock async_add_executor_job to propagate exceptions
     async def async_exec_with_exc(func, *args, **kwargs):
         """Execute function and propagate exceptions."""
         return func(*args, **kwargs)
+
     hass.async_add_executor_job = async_exec_with_exc
-    
+
     # Mock config_entries
     config_entries = Mock()
     config_entries.async_forward_entry_setups = AsyncMock(return_value=True)
     config_entries.async_forward_entry_unload = AsyncMock(return_value=True)
     config_entries.async_unload_platforms = AsyncMock(return_value=True)
     hass.config_entries = config_entries
-    
+
     # Mock data storage
     hass.data = {}
-    
+
     # Mock config
     hass.config = Mock()
     hass.config.components = set()
-    
+
     # Mock services
     hass.services = Mock()
     hass.services.async_register = AsyncMock()
-    
+
     return hass

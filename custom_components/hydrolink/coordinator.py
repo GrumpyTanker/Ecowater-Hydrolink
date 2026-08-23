@@ -2,7 +2,7 @@
 """
 EcoWater HydroLink Data Update Coordinator
 
-Manages data synchronization and updates between the HydroLink cloud API and 
+Manages data synchronization and updates between the HydroLink cloud API and
 Home Assistant entities. Provides centralized data management with real-time
 WebSocket updates, intelligent polling, and comprehensive error handling.
 
@@ -15,7 +15,7 @@ Key Features:
 - Data validation and state management
 - Integration with Home Assistant's coordinator pattern
 
-This coordinator serves as the bridge between the HydroLink API and all 
+This coordinator serves as the bridge between the HydroLink API and all
 sensor entities, ensuring consistent data flow and optimal performance
 while minimizing API calls and respecting rate limits.
 
@@ -30,20 +30,20 @@ Version History:
   * Code quality and standards improvements
   * Better error handling patterns
   * Comprehensive testing coverage
-  
+
 - 1.0.0 (2025-10-03)
   * Production release with enhanced stability
   * Improved error handling and recovery
   * Optimized update intervals and API efficiency
   * Enhanced logging and diagnostic capabilities
   * Better integration with Home Assistant lifecycle
-  
+
 - 0.2.0 (2025-10-02)
   * Added WebSocket support for real-time updates
   * Improved error handling and retry logic
   * Added comprehensive type hints
   * Enhanced data validation and processing
-  
+
 - 0.1.0 (2025-06-12)
   * Initial release with basic coordination
   * Polling implementation and data management
@@ -102,9 +102,14 @@ class HydroLinkDataUpdateCoordinator(DataUpdateCoordinator):
                 connection issues.
         """
         try:
+            _LOGGER.debug("Fetching updated data from HydroLink API")
             # Fetch the data from the API
-            return await self.hass.async_add_executor_job(self.api.get_data)
+            data = await self.hass.async_add_executor_job(self.api.get_data)
+            _LOGGER.debug("Successfully fetched data for %d device(s)", len(data))
+            return data
         except InvalidAuth as err:
+            _LOGGER.error("Authentication failed during data update: %s", err)
             raise UpdateFailed("Invalid authentication") from err
         except CannotConnect as err:
+            _LOGGER.error("Connection failed during data update: %s", err)
             raise UpdateFailed("Error communicating with API") from err

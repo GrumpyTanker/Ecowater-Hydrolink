@@ -13,7 +13,7 @@ Changelog:
 - 0.1.0 (2025-06-12)
   * Initial release
   * Basic constants defined
-  
+
 - 0.2.0 (2025-10-02)
   * Added service constants
   * Added platform definitions

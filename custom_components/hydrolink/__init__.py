@@ -22,7 +22,7 @@ Version History:
   * Comprehensive code quality improvements
   * Fixed ConfigEntry API compatibility issues
   * CI/CD pipeline stabilization
-  
+
 - 1.0.0 (2025-10-03)
   * HACS compatibility and validation
   * Enhanced documentation and comments
@@ -31,13 +31,13 @@ Version History:
   * WebSocket real-time updates
   * Service calls for manual regeneration
   * 30+ sensors across 8 categories
-  
+
 - 0.2.0 (2025-10-02)
   * Added service registration
   * Improved error handling
   * Added type hints and data coordinator
   * Enhanced data organization
-  
+
 - 0.1.0 (2025-06-12)
   * Initial release based on Hydrolink-Home-Status
   * Basic integration setup and config flow
@@ -62,6 +62,7 @@ from .coordinator import HydroLinkDataUpdateCoordinator
 from .services import async_setup_services
 
 PLATFORMS = [Platform.SENSOR]
+
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up the HydroLink component."""
@@ -95,7 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Forward the setup to the sensor platform
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    
+
     # Set up services
     await async_setup_services(hass)
 

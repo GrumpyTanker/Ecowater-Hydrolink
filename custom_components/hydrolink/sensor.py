@@ -69,6 +69,8 @@ License: MIT
 See LICENSE file in the project root for full license information.
 """
 
+from datetime import datetime, timezone
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -95,82 +97,74 @@ SENSOR_CATEGORIES = {
     "PERFORMANCE": "System performance metrics",
     "MAINTENANCE": "Maintenance and service information",
     "ALERTS": "System alerts and warnings",
-    "SYSTEM": "System status and configuration"
+    "SYSTEM": "System status and configuration",
 }
 
 # Set of sensors to be enabled by default
 DEFAULT_ENABLED_SENSORS = {
     # Basic Status and System Information
-    "_internal_is_online",              # Device online status
-    "app_active",                       # Application active status
-    "current_time_secs",                # Current device time
-    "model_description",                # Model description (EWS ERRC3702R50)
-    "nickname",                         # Device nickname
-
+    "_internal_is_online",  # Device online status
+    "app_active",  # Application active status
+    "current_time_secs",  # Current device time
+    "model_description",  # Model description (EWS ERRC3702R50)
+    "nickname",  # Device nickname
     # Water Usage and Flow Metrics (Imperial)
-    "current_water_flow_gpm",           # Current water flow in GPM
-    "gallons_used_today",              # Water used today in gallons
-    "avg_daily_use_gals",              # Average daily usage in gallons
-    "total_outlet_water_gals",         # Total treated water in gallons
-    "peak_water_flow_gpm",             # Peak water flow in GPM
-    "treated_water_avail_gals",        # Available treated water in gallons
-
+    "current_water_flow_gpm",  # Current water flow in GPM
+    "gallons_used_today",  # Water used today in gallons
+    "avg_daily_use_gals",  # Average daily usage in gallons
+    "total_outlet_water_gals",  # Total treated water in gallons
+    "peak_water_flow_gpm",  # Peak water flow in GPM
+    "treated_water_avail_gals",  # Available treated water in gallons
     # Salt Management
-    "salt_level_tenths",               # Current salt level in tenths (API value / 10 = %)
-    "out_of_salt_estimate_days",       # Days until salt needed
-    "avg_salt_per_regen_lbs",          # Average salt per regeneration (lbs)
-    "total_salt_use_lbs",              # Total salt used (lbs)
-
+    "salt_level_tenths",  # Current salt level in tenths (API value / 10 = %)
+    "out_of_salt_estimate_days",  # Days until salt needed
+    "avg_salt_per_regen_lbs",  # Average salt per regeneration (lbs)
+    "total_salt_use_lbs",  # Total salt used (lbs)
     # System Performance
-    "capacity_remaining_percent",       # Remaining capacity percentage
-    "operating_capacity_grains",        # Operating capacity in grains
-    "hardness_grains",                 # Water hardness in grains
-    "rock_removed_since_rech_lbs",     # Hardness removed since recharge (lbs)
-    "daily_avg_rock_removed_lbs",      # Daily average hardness removed (lbs)
-    "total_rock_removed_lbs",          # Total hardness removed (lbs)
-
+    "capacity_remaining_percent",  # Remaining capacity percentage
+    "operating_capacity_grains",  # Operating capacity in grains
+    "hardness_grains",  # Water hardness in grains
+    "rock_removed_since_rech_lbs",  # Hardness removed since recharge (lbs)
+    "daily_avg_rock_removed_lbs",  # Daily average hardness removed (lbs)
+    "total_rock_removed_lbs",  # Total hardness removed (lbs)
     # Regeneration Status
-    "regen_status_enum",               # Current regeneration status
-    "days_since_last_regen",           # Days since last regeneration
-    "total_regens",                    # Total regeneration count
-    "manual_regens",                   # Manual regeneration count
-    "regen_time_rem_secs",             # Remaining regeneration time
-
+    "regen_status_enum",  # Current regeneration status
+    "days_since_last_regen",  # Days since last regeneration
+    "total_regens",  # Total regeneration count
+    "manual_regens",  # Manual regeneration count
+    "regen_time_rem_secs",  # Remaining regeneration time
     # Critical Alerts
-    "low_salt_alert",                  # Low salt warning
-    "error_code_alert",                # System error alert
-    "flow_monitor_alert",              # Flow monitoring alert
-    "excessive_water_use_alert",       # High water usage alert
-    "floor_leak_detector_alert",       # Leak detection alert
-    "service_reminder_alert",          # Service reminder alert
-
+    "low_salt_alert",  # Low salt warning
+    "error_code_alert",  # System error alert
+    "flow_monitor_alert",  # Flow monitoring alert
+    "excessive_water_use_alert",  # High water usage alert
+    "floor_leak_detector_alert",  # Leak detection alert
+    "service_reminder_alert",  # Service reminder alert
     # Signal and Connection
-    "rf_signal_strength_dbm",          # WiFi signal strength
-    "rf_signal_bars",                  # WiFi signal quality
-
+    "rf_signal_strength_dbm",  # WiFi signal strength
+    "rf_signal_bars",  # WiFi signal quality
     # System Stats
-    "days_in_operation",               # Total days system has been running
-    "power_outage_count",              # Number of power outages
-    "service_reminder_months",         # Months until service needed
-    "time_lost_events",                # Time lost events count
-
+    "days_in_operation",  # Total days system has been running
+    "power_outage_count",  # Number of power outages
+    "service_reminder_months",  # Months until service needed
+    "time_lost_events",  # Time lost events count
     # Additional sensors enabled for debugging/inspection
-    "iron_level_tenths_ppm",           # Iron level in water
-    "tlc_avg_temp_tenths_c",           # TLC average temperature
-    "salt_effic_grains_per_lb",        # Salt efficiency
-    "salt_type_enum",                  # Salt type
-    "water_counter_gals",              # Water counter
-    "error_code",                      # Error code number
-    "service_active",                  # Service mode active
-    "product_serial_number",           # Device serial number
-    "location",                        # Device location
-    "system_type",                     # System type
-    "model_display_code",              # Model display code
-    "base_software_version",           # Base software version
-    "esp_software_part_number",        # ESP software part number
-    "regen_time_secs",                 # Regeneration time setting
-    "system_error",                    # System error status
-    "vacation_mode",                   # Vacation mode status
+    "iron_level_tenths_ppm",  # Iron level in water
+    "tlc_avg_temp_tenths_c",  # TLC average temperature
+    "salt_effic_grains_per_lb",  # Salt efficiency
+    "salt_type_enum",  # Salt type
+    "water_counter_gals",  # Water counter
+    "error_code",  # Error code number
+    "service_active",  # Service mode active
+    "product_serial_number",  # Device serial number
+    "location",  # Device location
+    "system_type",  # System type
+    "model_display_code",  # Model display code
+    "base_software_version",  # Base software version
+    "esp_software_part_number",  # ESP software part number
+    "regen_time_secs",  # Regeneration time setting
+    "system_error",  # System error status
+    "vacation_mode",  # Vacation mode status
 }
 
 # Descriptions for each sensor
@@ -217,7 +211,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:label-outline",
         "category": "BASIC",
     },
-
     # WATER METRICS
     "current_water_flow_gpm": {
         "name": "Current Water Flow",
@@ -267,7 +260,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:water-check",
         "category": "WATER",
     },
-
     # SALT METRICS
     # Note: salt_level_tenths is automatically divided by 10 (API sends 750 for 75%)
     "salt_level_tenths": {
@@ -302,7 +294,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:scale",
         "category": "SALT",
     },
-
     # PERFORMANCE METRICS
     "capacity_remaining_percent": {
         "name": "Capacity Remaining",
@@ -352,7 +343,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:scale",
         "category": "PERFORMANCE",
     },
-
     # REGENERATION STATUS
     "regen_status_enum": {
         "name": "Regeneration Status",
@@ -394,7 +384,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:timer",
         "category": "REGEN",
     },
-
     # ALERTS
     "low_salt_alert": {
         "name": "Low Salt Alert",
@@ -444,7 +433,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:tools",
         "category": "ALERTS",
     },
-
     # SYSTEM STATUS
     "rf_signal_strength_dbm": {
         "name": "WiFi Signal Strength",
@@ -486,7 +474,6 @@ SENSOR_DESCRIPTIONS = {
         "icon": "mdi:tools",
         "category": "SYSTEM",
     },
-
     # ADDITIONAL SENSORS (not enabled by default)
     "iron_level_tenths_ppm": {
         "name": "Iron Level",
@@ -630,30 +617,33 @@ SENSOR_DESCRIPTIONS = {
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the HydroLink sensors from a config entry."""
     import logging
+
     _LOGGER = logging.getLogger(__name__)
-    
+
     coordinator = hass.data[DOMAIN][entry.entry_id]
     entities = []
-    
+
     for device in coordinator.data:
         # Assuming 'demand_softener' is the target device type
         if device.get("system_type") != "demand_softener":
             continue
 
         device_name = device.get("nickname", "EcoWater Softener")
-        
+
         # Log all available properties from API for debugging
         available_props = list(device.get("properties", {}).keys())
         _LOGGER.info(
             "HydroLink device '%s' has %d properties available from API: %s",
             device_name,
             len(available_props),
-            ", ".join(sorted(available_props))
+            ", ".join(sorted(available_props)),
         )
 
         for prop_name, prop_info in device.get("properties", {}).items():
             if isinstance(prop_info, dict) and "value" in prop_info:
-                entities.append(HydroLinkSensor(coordinator, device["id"], prop_name, device_name))
+                entities.append(
+                    HydroLinkSensor(coordinator, device["id"], prop_name, device_name)
+                )
 
     _LOGGER.info("Created %d HydroLink sensor entities", len(entities))
     async_add_entities(entities)
@@ -695,14 +685,25 @@ class HydroLinkSensor(CoordinatorEntity, SensorEntity):
                 value = device["properties"][self._property_name].get("value")
 
                 # Handle numeric sensors when value is unknown
-                if (value == "unknown" and self.device_class in [
+                if value == "unknown" and self.device_class in [
                     SensorDeviceClass.ENERGY,
                     SensorDeviceClass.POWER,
                     SensorDeviceClass.CURRENT,
                     SensorDeviceClass.VOLTAGE,
                     SensorDeviceClass.PRESSURE,
-                    SensorDeviceClass.TEMPERATURE
-                ]):
+                    SensorDeviceClass.TEMPERATURE,
+                ]:
+                    return None
+
+                # Handle timestamp conversion for TIMESTAMP device class
+                # Convert Unix timestamp (seconds since epoch) to timezone-aware datetime
+                # Note: Only accepts positive timestamps (after Unix epoch 1970-01-01)
+                # Water softener devices don't report timestamps before this date
+                if self.device_class == SensorDeviceClass.TIMESTAMP and isinstance(
+                    value, (int, float)
+                ):
+                    if value > 0:  # Only convert valid positive timestamps
+                        return datetime.fromtimestamp(value, tz=timezone.utc)
                     return None
 
                 # Convert values that are provided in tenths
@@ -718,7 +719,10 @@ class HydroLinkSensor(CoordinatorEntity, SensorEntity):
                         return value / 10
 
                     # Salt values are provided in milligrams/thousandths, need to divide by 1000
-                    if self._property_name in ["avg_salt_per_regen_lbs", "total_salt_use_lbs"]:
+                    if self._property_name in [
+                        "avg_salt_per_regen_lbs",
+                        "total_salt_use_lbs",
+                    ]:
                         return value / 1000
 
                 return value

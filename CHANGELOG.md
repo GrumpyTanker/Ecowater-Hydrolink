@@ -5,6 +5,27 @@ All notable changes to the EcoWater HydroLink Home Assistant integration will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.4] - 2025-12-18
+
+### Fixed
+- **CRITICAL**: Fixed "Water Softener Device Time" sensor showing as "Unavailable"
+  - Sensor was returning raw Unix timestamps (integers) instead of timezone-aware datetime objects
+  - Now converts Unix timestamps to `datetime` objects with UTC timezone for `TIMESTAMP` device class sensors
+  - Returns `None` for invalid timestamps (≤ 0)
+  - Fixes `AttributeError: 'int' object has no attribute 'tzinfo'` error in Home Assistant logs
+
+### Added
+- **Enhanced Logging**: Added debug logging to data coordinator for better diagnostics
+  - Logs when data fetches begin
+  - Logs successful data fetches with device count
+  - Logs detailed error messages when fetches fail
+  - Helps diagnose data refresh and connection issues
+
+### Changed
+- Improved timestamp validation comments for clarity
+
+**Impact**: High - Fixes sensor availability issue and improves troubleshooting
+
 ## [1.2.3] - 2025-12-17
 
 ### Fixed

@@ -31,13 +31,13 @@ Version History:
   * Improved error handling and user feedback
   * Enhanced validation and security measures
   * Better integration with Home Assistant service system
-  
+
 - 0.2.0 (2025-10-02)
   * Added manual regeneration service implementation
   * Improved error handling and validation
   * Added comprehensive type hints
   * Enhanced logging and debugging
-  
+
 - 0.1.0 (2025-06-12)
   * Initial release with basic service framework
   * Service registration and setup infrastructure
@@ -55,6 +55,7 @@ from homeassistant.helpers import device_registry as dr
 from .const import DOMAIN, SERVICE_TRIGGER_REGENERATION
 from .api import CannotConnect, InvalidAuth
 
+
 async def async_setup_services(hass: HomeAssistant) -> None:
     """Set up HydroLink services."""
     device_registry = dr.async_get(hass)
@@ -67,7 +68,7 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         device_entries = dr.async_entries_for_device_id(device_registry, device_id)
         if not device_entries:
             raise ValueError(f"Device {device_id} not found")
-            
+
         # Get the first config entry ID for this device
         entry_id = next(iter(device_entries)).config_entry_id
         if not entry_id:
@@ -75,11 +76,10 @@ async def async_setup_services(hass: HomeAssistant) -> None:
 
         # Get the API instance from the coordinator
         coordinator = hass.data[DOMAIN][entry_id]
-        
+
         try:
             await hass.async_add_executor_job(
-                coordinator.api.trigger_regeneration,
-                device_id
+                coordinator.api.trigger_regeneration, device_id
             )
         except (CannotConnect, InvalidAuth) as err:
             raise ValueError(f"Failed to trigger regeneration: {err}") from err
@@ -88,7 +88,9 @@ async def async_setup_services(hass: HomeAssistant) -> None:
         DOMAIN,
         SERVICE_TRIGGER_REGENERATION,
         trigger_regeneration,
-        schema=vol.Schema({
-            vol.Required(ATTR_DEVICE_ID): str,
-        })
+        schema=vol.Schema(
+            {
+                vol.Required(ATTR_DEVICE_ID): str,
+            }
+        ),
     )
