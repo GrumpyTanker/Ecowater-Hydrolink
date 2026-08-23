@@ -196,7 +196,7 @@ SENSOR_DESCRIPTIONS = {
     "current_time_secs": {
         "name": "Device Time",
         "unit": None,
-        "device_class": SensorDeviceClass.TIMESTAMP,
+        "device_class": None, #current_time_secs is just seconds since midnight, so can't immediatly convert to TIMESTAMP.  Was:  SensorDeviceClass.TIMESTAMP,
         "state_class": None,
         "icon": "mdi:clock-outline",
         "category": "BASIC",
