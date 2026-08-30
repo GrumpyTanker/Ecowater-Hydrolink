@@ -53,8 +53,10 @@ Forces the water softener to begin a regeneration cycle immediately.
 * **Status:** Fully implemented and working.
 
 ### Update Settings (Needs Discovery)
-> [!IMPORTANT]
-> **Help Wanted:** The API endpoints for updating device settings (e.g., turning off scheduled regenerations, changing salt type) are currently unknown. See the *How to Reverse Engineer* section below if you want to help!
+* **URL:** `PUT https://api.hydrolinkhome.com/v1/devices/{device_id}/command`
+* **Status:** Partially Discovered / Needs Research
+* **Details:** We have successfully identified that settings are changed by sending a `PUT` request to the `/command` endpoint. The API enforces strict schema validation and requires at least `"action"` and `"function"` fields. However, standard value keys (`"value"`, `"parameters"`, `"data"`, `"payload"`) are currently rejected with a `422 Unprocessable Entity` (unexpected property) error. 
+* **Next Step:** Capture a HAR file from the Hydrolink consumer web dashboard (using browser Developer Tools) when changing a setting to see the exact required JSON structure for passing the setting values.
 
 ---
 
